@@ -77,15 +77,15 @@ while (choice != "0")
     }
     else if (choice == "2")
     {
-        throw new NotImplementedException("Post a plant to be adopted");
+        PostAPlant();
     }
     else if (choice == "3")
     {
-        throw new NotImplementedException("Adopt a plant");
+        AdoptAPlant();
     }
     else if (choice == "4")
     {
-        throw new NotImplementedException("Delist a plant");
+        DelistAPlant();
     }
     else
     {
@@ -93,8 +93,9 @@ while (choice != "0")
     }
 
     // switch (choice)
-    // {
-    //     case = "0":
+    // { 
+    // need these to be integers??
+    //     case = "0": 
     //         Console.WriteLine("Goodbye!");
     //         break;
 
@@ -134,34 +135,61 @@ void DisplayAllPlants()
 
     for (int i = 0; i < plants.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {plants[i].Species}");
+        Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} {(plants[i].Sold ? "was sold" : "is available")} for ${plants[i].AskingPrice}.");
     }
+    Console.WriteLine("");
+}
 
-    Plant chosenPlant = null;
+void PostAPlant()
+{
+    Console.WriteLine("Please enter the Species");
+    string postSpecies = Console.ReadLine().Trim();
+    Console.WriteLine("Please enter the Light Needs on a scale of 1.0 (shade) and 5.0 (full sun)");
+    double postLightNeeds = double.Parse(Console.ReadLine());
+    Console.WriteLine("Please enter the Asking Price");
+    decimal postAskingPrice = decimal.Parse(Console.ReadLine());
+    Console.WriteLine("Please enter the city");
+    string postCity = Console.ReadLine().Trim();
+    Console.WriteLine("Please enter the 5-digit zip code");
+    int postZIP = int.Parse(Console.ReadLine());
+    bool postSold = false;
 
-    while (chosenPlant == null)
+    plants.Add(new Plant() { Species = postSpecies, LightNeeds = postLightNeeds, AskingPrice = postAskingPrice, City = postCity, ZIP = postZIP, Sold = postSold });
+
+    Console.WriteLine($"Your {postSpecies} has sucessfully been added.");
+}
+
+void AdoptAPlant()
+{
+    Console.WriteLine("Plants:");
+
+    Console.WriteLine("Please enter a plant number for the plant you want to adopt: ");
+
+    for (int i = 0; i < plants.Count; i++)
     {
-        Console.WriteLine("Please enter a plant number: ");
-        try
-        {
-            int response = int.Parse(Console.ReadLine().Trim());
-            chosenPlant = plants[response - 1];
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Please type only integers!");
-        }
-        catch (ArgumentOutOfRangeException)
-        {
-            Console.WriteLine("Please choose an existing item only!");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            Console.WriteLine("Do Better!");
-        }
+        Console.WriteLine($"{(plants[i].Sold ? "" : $"{i + 1}. {plants[i].Species} in {plants[i].City} for ${plants[i].AskingPrice}.")}");
 
-        Console.WriteLine(@$"You chose: 
-    {chosenPlant.Species}");
     }
+    Console.WriteLine("");
+
+    int adoptedPlant = int.Parse(Console.ReadLine());
+
+    plants[adoptedPlant - 1].Sold = true;
+}
+
+void DelistAPlant()
+{
+    Console.WriteLine("Plants:");
+
+    Console.WriteLine("Please enter a plant number for the plant you want to remove from the list: ");
+
+    for (int i = 0; i < plants.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} for ${plants[i].AskingPrice}.");
+
+    }
+
+    int delistedPlant = int.Parse(Console.ReadLine());
+
+    plants.RemoveAt(delistedPlant - 1);
 }
