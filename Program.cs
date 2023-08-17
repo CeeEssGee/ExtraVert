@@ -50,6 +50,8 @@ List<Plant> plants = new List<Plant>()
     }
 };
 
+Random random = new Random();
+
 Console.Clear();
 string greeting = @"Welcome to Wet Your Plants!
 Your one-stop shop for any and all plants";
@@ -64,7 +66,8 @@ while (choice != "0")
     1. Display all plants
     2. Post a plant to be adopted
     3. Adopt a plant
-    4. Delist a plant");
+    4. Delist a plant
+    5. Plant of the day");
 
     choice = Console.ReadLine().Trim();
     if (choice == "0")
@@ -86,6 +89,10 @@ while (choice != "0")
     else if (choice == "4")
     {
         DelistAPlant();
+    }
+    else if (choice == "5")
+    {
+        RandomPlantOfTheDay();
     }
     else
     {
@@ -192,4 +199,15 @@ void DelistAPlant()
     int delistedPlant = int.Parse(Console.ReadLine());
 
     plants.RemoveAt(delistedPlant - 1);
+}
+
+void RandomPlantOfTheDay()
+{
+    int randomPlant = random.Next(0, plants.Count);
+    while (plants[randomPlant].Sold == true)
+    {
+        randomPlant = random.Next(0, plants.Count);
+    }
+    Console.WriteLine($"{plants[randomPlant].Species} has {plants[randomPlant]} light needs, is in {plants[randomPlant].City}, and {(plants[randomPlant].Sold ? "was sold" : "is available")} for ${plants[randomPlant].AskingPrice}.");
+
 }
