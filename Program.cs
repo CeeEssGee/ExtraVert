@@ -67,7 +67,8 @@ while (choice != "0")
     2. Post a plant to be adopted
     3. Adopt a plant
     4. Delist a plant
-    5. Plant of the day");
+    5. Plant of the day
+    6. Search by Light Level");
 
     choice = Console.ReadLine().Trim();
     if (choice == "0")
@@ -93,6 +94,10 @@ while (choice != "0")
     else if (choice == "5")
     {
         RandomPlantOfTheDay();
+    }
+    else if (choice == "6")
+    {
+        SearchByLightLevel();
     }
     else
     {
@@ -174,8 +179,10 @@ void AdoptAPlant()
 
     for (int i = 0; i < plants.Count; i++)
     {
-        Console.WriteLine($"{(plants[i].Sold ? "" : $"{i + 1}. {plants[i].Species} in {plants[i].City} for ${plants[i].AskingPrice}.")}");
-
+        if (plants[i].Sold == false)
+        {
+            Console.WriteLine($"{(plants[i].Sold ? "" : $"{i + 1}. {plants[i].Species} in {plants[i].City} for ${plants[i].AskingPrice}.")}");
+        }
     }
     Console.WriteLine("");
 
@@ -210,4 +217,18 @@ void RandomPlantOfTheDay()
     }
     Console.WriteLine($"{plants[randomPlant].Species} has {plants[randomPlant]} light needs, is in {plants[randomPlant].City}, and {(plants[randomPlant].Sold ? "was sold" : "is available")} for ${plants[randomPlant].AskingPrice}.");
 
+}
+
+void SearchByLightLevel()
+{
+    Console.WriteLine("Enter a maximum light level between 1.0 (shade) and 5.0 (full sun)");
+    double userLightLevel = double.Parse(Console.ReadLine());
+    foreach (Plant plant in plants)
+    {
+        if (plant.LightNeeds <= userLightLevel && plant.Sold == false)
+        {
+            Console.WriteLine($"{plant.Species} in {plant.City} has a light level of {plant.LightNeeds} and {(plant.Sold ? "was sold" : "is available")} for ${plant.AskingPrice}.");
+
+        }
+    }
 }
