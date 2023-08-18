@@ -52,7 +52,7 @@ List<Plant> plants = new List<Plant>()
         City = "Fort Mill",
         ZIP = 29715,
         Sold = false,
-        AvailableUntil = new DateTime(2023, 08, 18)
+        AvailableUntil = new DateTime(2024, 08, 18)
     }
 };
 
@@ -114,38 +114,6 @@ while (choice != "0")
     {
         Console.WriteLine("Please choose from the options in the menu.");
     }
-
-    // switch (choice)
-    // { 
-    // need these to be integers??
-    //     case = "0": 
-    //         Console.WriteLine("Goodbye!");
-    //         break;
-
-    //     case = "1":
-    //         DisplayAllPlants();
-    //         break;
-
-    //     case = "2":
-    //         throw new NotImplementedException();
-    //         break;
-
-    //     case = "3":
-    //         throw new NotImplementedException();
-    //         break;
-
-    //     case = "4":
-    //         throw new NotImplementedException();
-    //         break;
-
-    //     case < 0:
-    //     case > 5:
-    //         Console.WriteLine($"Please choose an existing item only!");
-
-    //     default:
-    //         Console.Write($"Do Better!");
-    // }
-
 
 }
 
@@ -242,7 +210,9 @@ void DelistAPlant()
 void RandomPlantOfTheDay()
 {
     int randomPlant = random.Next(0, plants.Count);
-    while (plants[randomPlant].Sold == true)
+    DateTime now = DateTime.Now;
+
+    while (plants[randomPlant].Sold == true && plants[randomPlant].AvailableUntil > now)
     {
         randomPlant = random.Next(0, plants.Count);
     }
@@ -287,18 +257,24 @@ void AppStatistics()
 
 
     Console.WriteLine("Stats");
-    Console.WriteLine("Lowest price plant name = ");
+    Console.Write($"Lowest price plant name = ");
     LowestPrice();
-    // Console.WriteLine("Number of Plants Available = ");
-    // Console.WriteLine("Name of plant with highest light needs = ");
-    // Console.WriteLine("Average light needs = ");
-    // Console.WriteLine("Percentage of plants adopted = ");
+    Console.Write("Number of Plants Available = ");
+    NumberOfPlants();
+    Console.Write("Name of plant with highest light needs = ");
+    HighestLightNeeds();
+    Console.Write("Average light needs = ");
+    AverageLightNeeds();
+    Console.Write("Percentage of plants adopted = ");
+    PercentageAdopted();
 }
 
 // this gets me the lowest price but not the species name
 void LowestPrice()
 {
     decimal lowestPrice;
+    Plant lowestPricedPlant = new Plant();
+
     if (plants.Any())
     {
         lowestPrice = Decimal.MaxValue;
@@ -307,11 +283,72 @@ void LowestPrice()
             if (plant.AskingPrice <= lowestPrice)
             {
                 lowestPrice = plant.AskingPrice;
+                lowestPricedPlant = plant;
             }
         }
-        Console.WriteLine(lowestPrice);
-
+        Console.WriteLine(lowestPricedPlant.Species);
     }
+}
 
+void NumberOfPlants()
+{
+    List<Plant> numberOfAvailablePlants = new List<Plant>();
+    DateTime now = DateTime.Now;
 
+    foreach (Plant plant in plants)
+    {
+        if (plant.Sold == false && plant.AvailableUntil >= now)
+            numberOfAvailablePlants.Add(plant);
+    }
+    Console.WriteLine(numberOfAvailablePlants.Count);
+}
+
+void HighestLightNeeds()
+{
+    Plant highestLightNeeds = new Plant();
+    double maxLight = 0;
+    if (plants.Any())
+    {
+        maxLight = double.MinValue;
+        foreach (Plant plant in plants)
+        {
+            if (plant.LightNeeds >= maxLight)
+            {
+                maxLight = plant.LightNeeds;
+                highestLightNeeds = plant;
+            }
+        }
+        Console.WriteLine(highestLightNeeds.Species);
+    }
+}
+
+void AverageLightNeeds()
+{
+    int countOfPlants = plants.Count;
+    double countOfPlantsAsDouble = (double)countOfPlants;
+    double totalLight = 0;
+    foreach (Plant plant in plants)
+    {
+        totalLight += plant.LightNeeds;
+    }
+    Console.WriteLine(totalLight / countOfPlantsAsDouble);
+}
+
+void PercentageAdopted()
+{
+    int countOfPlants = plants.Count;
+    double countOfPlantsAsDouble = (double)countOfPlants;
+    List<Plant> SoldPlants = new List<Plant>();
+    foreach (Plant plant in plants)
+    {
+        if (plant.Sold == true)
+        {
+            SoldPlants.Add(plant);
+        }
+    }
+    int soldPlants = SoldPlants.Count;
+    double soldPlantsDouble = (double)soldPlants;
+    double decimalSoldPlants = soldPlantsDouble / countOfPlantsAsDouble;
+    double percentageAdopted = decimalSoldPlants * 100;
+    Console.WriteLine($"{percentageAdopted}%");
 }
