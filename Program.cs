@@ -295,11 +295,10 @@ void AppStatistics()
     // Console.WriteLine("Percentage of plants adopted = ");
 }
 
+// this gets me the lowest price but not the species name
 void LowestPrice()
 {
     decimal lowestPrice;
-    List<Plant> lowestPricedPlants = new List<Plant>();
-
     if (plants.Any())
     {
         lowestPrice = Decimal.MaxValue;
@@ -307,16 +306,12 @@ void LowestPrice()
         {
             if (plant.AskingPrice <= lowestPrice)
             {
-                while (lowestPrice == plant.AskingPrice)
-                {
-                    lowestPricedPlants.Add(plant);
-                }
-                foreach (Plant lowestPricedPlant in lowestPricedPlants)
-                {
-                    Console.WriteLine(lowestPricedPlant.Species);
-                }
+                lowestPrice = plant.AskingPrice;
             }
         }
-        // Console.WriteLine(lowestPrice);
+        Console.WriteLine(lowestPrice);
+
     }
+
+
 }
