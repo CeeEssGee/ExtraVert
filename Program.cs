@@ -88,7 +88,15 @@ while (choice != "0")
     }
     else if (choice == "2")
     {
-        PostAPlant();
+        try
+        {
+            PostAPlant();
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            Console.WriteLine("The date is invalid. Please try again.");
+        }
+
     }
     else if (choice == "3")
     {
@@ -126,8 +134,7 @@ void DisplayAllPlants()
 
     for (int i = 0; i < plants.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} {(plants[i].Sold ? "was sold" : "is available")} for ${plants[i].AskingPrice}.");
-        //  and is available until {plants[i].AvailableUntil}
+        Console.WriteLine($"{i + 1}. {PlantDetails(plants[i])}");
     }
     Console.WriteLine("");
 }
@@ -152,9 +159,6 @@ void PostAPlant()
     Console.WriteLine("Please enter the year the plant will be available until");
     int postYear = int.Parse(Console.ReadLine());
     DateTime postAvailableUntil = new DateTime(postYear, postMonth, postDay);
-    // Console.WriteLine("Please enter the year, month, and day for the Available Until date");
-    // new DateTime postAvailableUntil = DateTime.Parse(Console.ReadLine());
-
 
     plants.Add(new Plant()
     {
@@ -180,7 +184,7 @@ void AdoptAPlant()
     {
         if (plants[i].Sold == false && plants[i].AvailableUntil > now)
         {
-            Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} for ${plants[i].AskingPrice}.");
+            Console.WriteLine($"{i + 1}. {PlantDetails(plants[i])}.");
         }
     }
     Console.WriteLine("");
@@ -198,7 +202,7 @@ void DelistAPlant()
 
     for (int i = 0; i < plants.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} for ${plants[i].AskingPrice}.");
+        Console.WriteLine($"{i + 1}. {PlantDetails(plants[i])}.");
 
     }
 
@@ -243,7 +247,7 @@ void SearchByLightLevel()
         foreach (Plant plant in plantsByLight)
         {
 
-            Console.WriteLine($"{i++}. {plant.Species} in {plant.City} has a light level of {plant.LightNeeds} and {(plant.Sold ? "was sold" : "is available")} for ${plant.AskingPrice}.");
+            Console.WriteLine($"{i++}. {PlantDetails(plant)}.");
         }
     }
     else
@@ -352,3 +356,14 @@ void PercentageAdopted()
     double percentageAdopted = decimalSoldPlants * 100;
     Console.WriteLine($"{percentageAdopted}%");
 }
+
+string PlantDetails(Plant plant)
+{
+
+
+    string plantString = $"{plant.Species} in {plant.City} has a light level of {plant.LightNeeds} and {(plant.Sold ? "was sold" : "is available")} for ${plant.AskingPrice}.";
+
+    return plantString;
+}
+
+
