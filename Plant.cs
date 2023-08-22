@@ -7,6 +7,7 @@ public class Plant
     public int ZIP { get; set; }
     public bool Sold { get; set; }
     public DateTime AvailableUntil { get; set; }
+    public string PlantType { get; set; } // Explorer
 
     internal object CompareTo(Plant b)
     {

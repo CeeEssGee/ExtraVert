@@ -1,12 +1,14 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
+using System.Runtime.ConstrainedExecution;
 
 List<Plant> plants = new List<Plant>()
 {
     new Plant()
     {
         Species = "Peace Lily",
+        PlantType = "flower",
         LightNeeds = 3.7,
         AskingPrice = 50.00M,
         City = "Jacksonville",
@@ -17,6 +19,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Snake Plant",
+        PlantType = "bush",
         LightNeeds = 4.5,
         AskingPrice = 20.00M,
         City = "Tallahassee",
@@ -27,6 +30,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Fig Tree",
+        PlantType = "tree",
         LightNeeds = 2.5,
         AskingPrice = 99.95M,
         City = "Fort Mill",
@@ -37,6 +41,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Golden Pothos",
+        PlantType = "bush",
         LightNeeds = 3.8,
         AskingPrice = 19.95M,
         City = "Jacksonville",
@@ -47,6 +52,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Silver Dollar Eucalyptus Tree",
+        PlantType = "tree",
         LightNeeds = 5.0,
         AskingPrice = 29.95M,
         City = "Fort Mill",
@@ -75,7 +81,8 @@ while (choice != "0")
     4. Delist a plant
     5. Plant of the day
     6. Search by Light Level
-    7. App Statistics");
+    7. App Statistics
+    8. Inventory by Species");
 
     choice = Console.ReadLine().Trim();
     if (choice == "0")
@@ -118,6 +125,12 @@ while (choice != "0")
     {
         AppStatistics();
     }
+    else if (choice == "8")
+    {
+        // Explorer
+        InventoryBySpecies();
+
+    }
     else
     {
         Console.WriteLine("Please choose from the options in the menu.");
@@ -130,7 +143,7 @@ void DisplayAllPlants()
 {
     Console.WriteLine("Plants:");
 
-    Console.WriteLine("Please enter a plant number: ");
+    // Console.WriteLine("Please enter a plant number: ");
 
     for (int i = 0; i < plants.Count; i++)
     {
@@ -141,6 +154,44 @@ void DisplayAllPlants()
 
 void PostAPlant()
 {
+
+    string[] plantTypes =
+{
+    "tree",
+    "bush",
+    "flower",
+    "herb"
+};
+    int i = 1;
+    Console.WriteLine("Please enter the number for the type of plant:");
+    foreach (string plantType in plantTypes)
+    {
+        Console.WriteLine($"{i++}. {plantType}");
+    }
+    // if else statement or switch statement
+    string initialUserPlantType = Console.ReadLine();
+    string postUserPlantType = "";
+    if (initialUserPlantType == "1")
+    {
+        postUserPlantType = "tree";
+    }
+    else if (initialUserPlantType == "2")
+    {
+        postUserPlantType = "bush";
+    }
+    else if (initialUserPlantType == "3")
+    {
+        postUserPlantType = "flower";
+    }
+    else if (initialUserPlantType == "4")
+    {
+        postUserPlantType = "herb";
+    }
+    else
+    {
+        Console.WriteLine("Please enter a plant type's number");
+    }
+
     Console.WriteLine("Please enter the Species");
     string postSpecies = Console.ReadLine().Trim();
     Console.WriteLine("Please enter the Light Needs on a scale of 1.0 (shade) and 5.0 (full sun)");
@@ -162,6 +213,8 @@ void PostAPlant()
 
     plants.Add(new Plant()
     {
+
+        PlantType = postUserPlantType,
         Species = postSpecies,
         LightNeeds = postLightNeeds,
         AskingPrice = postAskingPrice,
@@ -273,7 +326,6 @@ void AppStatistics()
     PercentageAdopted();
 }
 
-// this gets me the lowest price but not the species name
 void LowestPrice()
 {
     decimal lowestPrice;
@@ -326,16 +378,10 @@ void HighestLightNeeds()
     }
 }
 
+// select all of the light needs of each
 void AverageLightNeeds()
 {
-    int countOfPlants = plants.Count;
-    double countOfPlantsAsDouble = (double)countOfPlants;
-    double totalLight = 0;
-    foreach (Plant plant in plants)
-    {
-        totalLight += plant.LightNeeds;
-    }
-    Console.WriteLine(totalLight / countOfPlantsAsDouble);
+    Console.WriteLine(plants.Select(p => p.LightNeeds).Average());
 }
 
 void PercentageAdopted()
@@ -361,9 +407,36 @@ string PlantDetails(Plant plant)
 {
 
 
-    string plantString = $"{plant.Species} in {plant.City} has a light level of {plant.LightNeeds} and {(plant.Sold ? "was sold" : "is available")} for ${plant.AskingPrice}.";
+    string plantString = $"{plant.Species} ({plant.PlantType}) in {plant.City} has a light level of {plant.LightNeeds} and {(plant.Sold ? "was sold" : "is available")} for ${plant.AskingPrice}.";
 
     return plantString;
 }
 
+// Explorer
+void InventoryBySpecies()
+{
+    Dictionary<string, int> plantInventory = new Dictionary<string, int>
+    {
+        {"Peace Lily", 3},
+        {"Snake Plant", 4}
+    };
+
+    foreach (Plant plant in plants)
+    {
+        int plantNumber;
+        bool plantNumberSuccess = plantInventory.TryGetValue(plant.Species, out plantNumber);
+        if (plantNumberSuccess)
+        {
+            plantInventory[plant.Species] = plantNumber + 1;
+        }
+        else
+        {
+            plantInventory.Add(plant.Species, 1);
+        }
+
+    }
+    foreach (KeyValuePair<string, int> kv in plantInventory)
+        Console.WriteLine($"Species: {kv.Key}, Number: {kv.Value}");
+
+}
 
